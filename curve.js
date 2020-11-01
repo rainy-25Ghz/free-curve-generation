@@ -56,7 +56,6 @@ const drawBezier = (controlPts) => {
 }
 drawControlPts_bz(points_bz);
 drawBezier(points_bz);
-let increaseBt = document.getElementById("increase_bz");
 let ctrlPtsList = document.getElementById("PtsList");
 const showCtrPts_bz = (pts) => {
     let ol = document.createElement("ol");
@@ -68,6 +67,7 @@ const showCtrPts_bz = (pts) => {
     ctrlPtsList.appendChild(ol);
 }
 showCtrPts_bz(points_bz);
+let increaseBt = document.getElementById("increase_bz");
 const onIncrease = () => {
     let x = Math.floor((Math.random() * 450 + 1));
     let y = Math.floor((Math.random() * 280 + 1));
@@ -81,7 +81,17 @@ const onIncrease = () => {
     ol.appendChild(li);
 }
 increaseBt.onclick = onIncrease;
-
+let decreaseBt = document.getElementById("decrease_bz");
+const onDecrease = () => {
+    points_bz.pop();
+    ctx_bz.clearRect(0, 0, 500, 300);
+    drawControlPts_bz(points_bz);
+    drawBezier(points_bz);
+    let ol = document.querySelector("ol");
+    let li_arr = ol.childNodes;
+    ol.removeChild(li_arr[li_arr.length - 1]);
+}
+decreaseBt.onclick = onDecrease;
 //b样条部分
 const points = [[90, 200], [25, 100], [220, 40], [110, 240], [150, 280]];//测试用
 let canvas = document.getElementById('bspline');

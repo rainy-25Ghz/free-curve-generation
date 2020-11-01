@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>贝塞尔曲线</title>
+  </head>
+  <body>
+    <div class="box1" style="display: flex">
+      <div id="bz_canva">
+        <h1>贝塞尔曲线</h1>
+        <canvas
+          style="background-color: #eaeff3"
+          id="bezier"
+          width="500"
+          height="300"
+          back
+        >
+        </canvas>
+      </div>
+      <div class="panel_bz" style="flex: 1">
+        <h3>增加随机控制点</h3>
+        <button id="increase_bz">+</button>
+        <h3>减少随机控制点</h3>
+        <button id="decrease_bz">-</button>
+      </div>
+      <div id="PtsList" style="flex: 1">
+        <h3>控制点坐标</h3>
+      </div>
+    </div>
+
+    <div class="box2" style="display: flex">
+      <div id="bspline_canva">
+        <h1>B样条曲线</h1>
+        <canvas
+          style="background-color: #eaeff3"
+          id="bspline"
+          width="500"
+          height="300"
+          back
+        >
+        </canvas>
+      </div>
+      <div class="panel">
+        <h3>控制点</h3>
+        <button></button>
+      </div>
+    </div>
+
+    <script src="curve.js"></script>
+  </body>
+</html>

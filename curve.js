@@ -105,8 +105,8 @@ const drawPt = (pts, color) => {
         ctx.moveTo(x + 4, y);
         ctx.arc(x, y, 4, 0, Math.PI * 2, true);
         ctx.stroke();
-        ctx_bz.font = "10px";
-        ctx_bz.fillText(`${x},${y}`, x + 5, y);
+        ctx.font = "10px";
+        ctx.fillText(`${x},${y}`, x + 5, y);
     }
 }
 const drawLines = (pts, color) => {

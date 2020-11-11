@@ -134,7 +134,7 @@ canvas_bz.addEventListener('mousedown', function (evt) {
 
 
 //b样条部分
-const points = [[90, 200], [25, 100], [220, 40], [110, 240], [150, 280]];//测试用
+const points = [[111, 256], [25, 100], [220, 40], [422, 100], [416, 256]];//测试用
 let canvas = document.getElementById('bspline');
 let ctx = canvas.getContext('2d');
 //绘制控制点
@@ -206,10 +206,31 @@ function Bspline(controlPts, u) {
     }
     return [x_, y_];
 }
+const mymap = (value) => {
+    let tmp = Bspline(points, value);
+    if (value == 3 / 8) {
+        drawLines([tmp, points[0]], "red");
+        // drawLines([tmp, points[1]], "red");
+
+        ctx.font = "10px";
+        ctx.fillText(`3/8`, tmp[0] + 5, tmp[1]);
+    }
+    if (value == 4 / 8) {
+        drawLines([tmp, points[4]], "purple");
+        drawLines([tmp, points[0]], "red");
+        ctx.font = "10px";
+        ctx.fillText(`4/8`, tmp[0] + 5, tmp[1]);
+    }
+    if (value == 5 / 8) {
+        //drawLines([tmp, points[1]], "red");
+        drawLines([tmp, points[4]], "purple");
+        ctx.font = "10px";
+        ctx.fillText(`5/8`, tmp[0] + 5, tmp[1]);
+    }
+    return tmp;
+};
 //Bspline(points, 1);
-let ans = u_arr.map((value) => {
-    return Bspline(points, value);
-});
+let ans = u_arr.map(mymap);
 let ctrlPtsList_ = document.getElementById("PtsList_2");
 const showCtrPts_bs = (pts) => {
     while (ctrlPtsList_.firstChild) { ctrlPtsList_.removeChild(ctrlPtsList_.firstChild) };
@@ -238,9 +259,7 @@ function onMouseMove2(evt) {
     points[index2] = [pos.x, pos.y];
     ctx.clearRect(0, 0, 500, 300);
     drawControlPts(points);
-    drawLines(u_arr.map((value) => {
-        return Bspline(points, value);
-    }), "#000000");
+    drawLines(u_arr.map(mymap), "#000000");
     showCtrPts_bs(points);
 }
 canvas.addEventListener('mousedown', function (evt) {

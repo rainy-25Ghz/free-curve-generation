@@ -224,6 +224,38 @@ const showCtrPts_bs = (pts) => {
     ctrlPtsList_.appendChild(h3);
     ctrlPtsList_.appendChild(ol);
 }
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: Math.round(evt.clientX - rect.left),
+        y: Math.round(evt.clientY - rect.top)
+    };
+}
+let index2 = -1;
+
+function onMouseMove2(evt) {
+    var pos = getMousePos(this, evt);
+    points[index2] = [pos.x, pos.y];
+    ctx.clearRect(0, 0, 500, 300);
+    drawControlPts(points);
+    drawLines(u_arr.map((value) => {
+        return Bspline(points, value);
+    }), "#000000");
+    showCtrPts_bs(points);
+}
+canvas.addEventListener('mousedown', function (evt) {
+    var pos = getMousePos(this, evt);
+    for (let i = 0; i < points.length; i++) {
+        if (Math.abs(pos.x - points[i][0]) < 5 && Math.abs(pos.y - points[i][1]) < 5) {
+            points[i] = [pos.x, pos.y];
+            index2 = i;
+            this.addEventListener("mousemove", onMouseMove2);
+            this.addEventListener("mouseup", function (evt) {
+                this.removeEventListener("mousemove", onMouseMove2);
+            });
+        }
+    }
+})
 showCtrPts_bs(points);
-drawLines(ans);
+drawLines(ans, "#000000");
 drawControlPts(points);

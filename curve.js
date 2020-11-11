@@ -1,5 +1,6 @@
 let canvas_bz = document.getElementById('bezier');
 let ctx_bz = canvas_bz.getContext('2d');
+
 //绘制控制点
 const drawPt_bz = (pts, color) => {
     ctx_bz.beginPath();
@@ -19,14 +20,15 @@ const drawLines_bz = (pts, color) => {
     for (const pt of pts) {
         const [x, y] = pt;
         ctx_bz.lineTo(x, y);
-        ctx_bz.stroke();
     }
+    ctx_bz.stroke();
 }
 const drawControlPts_bz = (pts, color1 = "#52b3ef", color2 = "#52b3ef") => {
     drawPt_bz(pts, color1);
     drawLines_bz(pts, color2);
 }
 let points_bz = [[90, 200], [25, 100], [220, 40], [110, 240], [150, 280]]
+
 //求解贝塞尔曲线
 //递归求解
 //n个控制点，构成n-1条边
@@ -48,9 +50,9 @@ const bezier = (points, t) => {
 }
 // 绘制贝塞尔函数
 const drawBezier = (controlPts) => {
-    let t_arr = Array(1001).fill(0);
-    t_arr = t_arr.map((value, index) => index * 0.001);
-    console.log(t_arr);
+    let t_arr = Array(101).fill(0);
+    t_arr = t_arr.map((value, index) => index * 0.01);
+    //console.log(t_arr);
     bezierPts = t_arr.map(t => bezier(controlPts, t));
     drawLines_bz(bezierPts, "#000010");
 }
@@ -58,12 +60,16 @@ drawControlPts_bz(points_bz);
 drawBezier(points_bz);
 let ctrlPtsList = document.getElementById("PtsList");
 const showCtrPts_bz = (pts) => {
+    while (ctrlPtsList.firstChild) { ctrlPtsList.removeChild(ctrlPtsList.firstChild) };
     let ol = document.createElement("ol");
     pts.forEach(pt => {
         let li = document.createElement("li");
         li.textContent = `(${pt[0]},${pt[1]})`;
         ol.appendChild(li);
     });
+    let h3 = document.createElement("h3");
+    h3.textContent = "控制点坐标";
+    ctrlPtsList.appendChild(h3);
     ctrlPtsList.appendChild(ol);
 }
 showCtrPts_bz(points_bz);
@@ -92,6 +98,41 @@ const onDecrease = () => {
     ol.removeChild(li_arr[li_arr.length - 1]);
 }
 decreaseBt.onclick = onDecrease;
+function renderList() {
+
+}
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: Math.round(evt.clientX - rect.left),
+        y: Math.round(evt.clientY - rect.top)
+    };
+}
+let index = -1;
+
+function onMouseMove(evt) {
+    var pos = getMousePos(this, evt);
+    points_bz[index] = [pos.x, pos.y];
+    ctx_bz.clearRect(0, 0, 500, 300);
+    drawControlPts_bz(points_bz);
+    drawBezier(points_bz);
+    showCtrPts_bz(points_bz);
+}
+canvas_bz.addEventListener('mousedown', function (evt) {
+    var pos = getMousePos(this, evt);
+    for (let i = 0; i < points_bz.length; i++) {
+        if (Math.abs(pos.x - points_bz[i][0]) < 5 && Math.abs(pos.y - points_bz[i][1]) < 5) {
+            points_bz[i] = [pos.x, pos.y];
+            index = i;
+            this.addEventListener("mousemove", onMouseMove);
+            this.addEventListener("mouseup", function (evt) {
+                this.removeEventListener("mousemove", onMouseMove);
+            });
+        }
+    }
+})
+
+
 //b样条部分
 const points = [[90, 200], [25, 100], [220, 40], [110, 240], [150, 280]];//测试用
 let canvas = document.getElementById('bspline');
@@ -115,8 +156,8 @@ const drawLines = (pts, color) => {
     for (const pt of pts) {
         const [x, y] = pt;
         ctx.lineTo(x, y);
-        ctx.stroke();
     }
+    ctx.stroke();
 }
 const drawControlPts = (pts, color1 = "#52b3ef", color2 = "#52b3ef") => {
     drawPt(pts, color1);
@@ -165,9 +206,24 @@ function Bspline(controlPts, u) {
     }
     return [x_, y_];
 }
-Bspline(points, 1);
+//Bspline(points, 1);
 let ans = u_arr.map((value) => {
     return Bspline(points, value);
 });
+let ctrlPtsList_ = document.getElementById("PtsList_2");
+const showCtrPts_bs = (pts) => {
+    while (ctrlPtsList_.firstChild) { ctrlPtsList_.removeChild(ctrlPtsList_.firstChild) };
+    let ol = document.createElement("ol");
+    pts.forEach(pt => {
+        let li = document.createElement("li");
+        li.textContent = `(${pt[0]},${pt[1]})`;
+        ol.appendChild(li);
+    });
+    let h3 = document.createElement("h3");
+    h3.textContent = "控制点坐标";
+    ctrlPtsList_.appendChild(h3);
+    ctrlPtsList_.appendChild(ol);
+}
+showCtrPts_bs(points);
 drawLines(ans);
 drawControlPts(points);

@@ -133,148 +133,148 @@ canvas_bz.addEventListener('mousedown', function (evt) {
 })
 
 
-//b样条部分
-const points = [[111, 256], [25, 100], [220, 40], [422, 100], [416, 256]];//测试用
-let canvas = document.getElementById('bspline');
-let ctx = canvas.getContext('2d');
-//绘制控制点
-const drawPt = (pts, color) => {
-    ctx.beginPath();
-    ctx.strokeStyle = color;
-    for (const pt of pts) {
-        const [x, y] = pt;
-        ctx.moveTo(x + 4, y);
-        ctx.arc(x, y, 4, 0, Math.PI * 2, true);
-        ctx.stroke();
-        ctx.font = "10px";
-        ctx.fillText(`${x},${y}`, x + 5, y);
-    }
-}
-const drawLines = (pts, color) => {
-    ctx.beginPath();
-    ctx.strokeStyle = color;
-    for (const pt of pts) {
-        const [x, y] = pt;
-        ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-}
-const drawControlPts = (pts, color1 = "#52b3ef", color2 = "#52b3ef") => {
-    drawPt(pts, color1);
-    drawLines(pts, color2);
-}
-const knots = [0, 1 / 8, 2 / 8, 3 / 8, 4 / 8, 5 / 8, 6 / 8, 7 / 8, 1];
-const p = 3;
-//@控制点的数组
-//@节点数组
-//1.均匀b样条
-//2.准均匀b样条
-//第i个p次(p+1阶)B样条基函数
-function baseN(i, p, u, knots) {
-    //递归边界条件
-    if (p === 0) {
-        if (u >= knots[i] && u < knots[i + 1])
-            return 1;
-        else return 0;
-    }
+// //b样条部分
+// const points = [[111, 256], [25, 100], [220, 40], [422, 100], [416, 256]];//测试用
+// let canvas = document.getElementById('bspline');
+// let ctx = canvas.getContext('2d');
+// //绘制控制点
+// const drawPt = (pts, color) => {
+//     ctx.beginPath();
+//     ctx.strokeStyle = color;
+//     for (const pt of pts) {
+//         const [x, y] = pt;
+//         ctx.moveTo(x + 4, y);
+//         ctx.arc(x, y, 4, 0, Math.PI * 2, true);
+//         ctx.stroke();
+//         ctx.font = "10px";
+//         ctx.fillText(`${x},${y}`, x + 5, y);
+//     }
+// }
+// const drawLines = (pts, color) => {
+//     ctx.beginPath();
+//     ctx.strokeStyle = color;
+//     for (const pt of pts) {
+//         const [x, y] = pt;
+//         ctx.lineTo(x, y);
+//     }
+//     ctx.stroke();
+// }
+// const drawControlPts = (pts, color1 = "#52b3ef", color2 = "#52b3ef") => {
+//     drawPt(pts, color1);
+//     drawLines(pts, color2);
+// }
+// const knots = [0, 1 / 8, 2 / 8, 3 / 8, 4 / 8, 5 / 8, 6 / 8, 7 / 8, 1];
+// const p = 3;
+// //@控制点的数组
+// //@节点数组
+// //1.均匀b样条
+// //2.准均匀b样条
+// //第i个p次(p+1阶)B样条基函数
+// function baseN(i, p, u, knots) {
+//     //递归边界条件
+//     if (p === 0) {
+//         if (u >= knots[i] && u < knots[i + 1])
+//             return 1;
+//         else return 0;
+//     }
 
-    let a = (u - knots[i]);
-    let b = (knots[i + p] - knots[i]);
-    let c = (knots[i + p + 1] - u);
-    let d = (knots[i + p + 1] - knots[i + 1]);
-    let a_b, c_d;
-    if (b === 0)
-        a_b = 0;
-    else
-        a_b = a / b;
-    if (d === 0)
-        c_d = 0;
-    else
-        c_d = c / d;
-    return a_b * baseN(i, p - 1, u, knots)
-        + c_d * baseN(i + 1, p - 1, u, knots);
-}
-let u_arr = Array(1001).fill(3 / 8);
-u_arr = u_arr.map((value, index) => 3 / 8 + index * 0.001 * 2 / 8);
-function Bspline(controlPts, u) {
-    let x_ = 0;
-    let y_ = 0;
-    for (let i = 0; i < controlPts.length; i++) {
-        [x, y] = controlPts[i];
-        x_ += baseN(i, p, u, knots) * x;
-        y_ += baseN(i, p, u, knots) * y;
-    }
-    return [x_, y_];
-}
-const mymap = (value) => {
-    let tmp = Bspline(points, value);
-    if (value == 3 / 8) {
-        drawLines([tmp, points[0]], "red");
-        // drawLines([tmp, points[1]], "red");
+//     let a = (u - knots[i]);
+//     let b = (knots[i + p] - knots[i]);
+//     let c = (knots[i + p + 1] - u);
+//     let d = (knots[i + p + 1] - knots[i + 1]);
+//     let a_b, c_d;
+//     if (b === 0)
+//         a_b = 0;
+//     else
+//         a_b = a / b;
+//     if (d === 0)
+//         c_d = 0;
+//     else
+//         c_d = c / d;
+//     return a_b * baseN(i, p - 1, u, knots)
+//         + c_d * baseN(i + 1, p - 1, u, knots);
+// }
+// let u_arr = Array(1001).fill(3 / 8);
+// u_arr = u_arr.map((value, index) => 3 / 8 + index * 0.001 * 2 / 8);
+// function Bspline(controlPts, u) {
+//     let x_ = 0;
+//     let y_ = 0;
+//     for (let i = 0; i < controlPts.length; i++) {
+//         [x, y] = controlPts[i];
+//         x_ += baseN(i, p, u, knots) * x;
+//         y_ += baseN(i, p, u, knots) * y;
+//     }
+//     return [x_, y_];
+// }
+// const mymap = (value) => {
+//     let tmp = Bspline(points, value);
+//     if (value == 3 / 8) {
+//         drawLines([tmp, points[0]], "red");
+//         // drawLines([tmp, points[1]], "red");
 
-        ctx.font = "10px";
-        ctx.fillText(`3/8`, tmp[0] + 5, tmp[1]);
-    }
-    if (value == 4 / 8) {
-        drawLines([tmp, points[4]], "purple");
-        drawLines([tmp, points[0]], "red");
-        ctx.font = "10px";
-        ctx.fillText(`4/8`, tmp[0] + 5, tmp[1]);
-    }
-    if (value == 5 / 8) {
-        //drawLines([tmp, points[1]], "red");
-        drawLines([tmp, points[4]], "purple");
-        ctx.font = "10px";
-        ctx.fillText(`5/8`, tmp[0] + 5, tmp[1]);
-    }
-    return tmp;
-};
-//Bspline(points, 1);
-let ans = u_arr.map(mymap);
-let ctrlPtsList_ = document.getElementById("PtsList_2");
-const showCtrPts_bs = (pts) => {
-    while (ctrlPtsList_.firstChild) { ctrlPtsList_.removeChild(ctrlPtsList_.firstChild) };
-    let ol = document.createElement("ol");
-    pts.forEach(pt => {
-        let li = document.createElement("li");
-        li.textContent = `(${pt[0]},${pt[1]})`;
-        ol.appendChild(li);
-    });
-    let h3 = document.createElement("h3");
-    h3.textContent = "控制点坐标";
-    ctrlPtsList_.appendChild(h3);
-    ctrlPtsList_.appendChild(ol);
-}
-function getMousePos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect();
-    return {
-        x: Math.round(evt.clientX - rect.left),
-        y: Math.round(evt.clientY - rect.top)
-    };
-}
-let index2 = -1;
+//         ctx.font = "10px";
+//         ctx.fillText(`3/8`, tmp[0] + 5, tmp[1]);
+//     }
+//     if (value == 4 / 8) {
+//         drawLines([tmp, points[4]], "purple");
+//         drawLines([tmp, points[0]], "red");
+//         ctx.font = "10px";
+//         ctx.fillText(`4/8`, tmp[0] + 5, tmp[1]);
+//     }
+//     if (value == 5 / 8) {
+//         //drawLines([tmp, points[1]], "red");
+//         drawLines([tmp, points[4]], "purple");
+//         ctx.font = "10px";
+//         ctx.fillText(`5/8`, tmp[0] + 5, tmp[1]);
+//     }
+//     return tmp;
+// };
+// //Bspline(points, 1);
+// let ans = u_arr.map(mymap);
+// let ctrlPtsList_ = document.getElementById("PtsList_2");
+// const showCtrPts_bs = (pts) => {
+//     while (ctrlPtsList_.firstChild) { ctrlPtsList_.removeChild(ctrlPtsList_.firstChild) };
+//     let ol = document.createElement("ol");
+//     pts.forEach(pt => {
+//         let li = document.createElement("li");
+//         li.textContent = `(${pt[0]},${pt[1]})`;
+//         ol.appendChild(li);
+//     });
+//     let h3 = document.createElement("h3");
+//     h3.textContent = "控制点坐标";
+//     ctrlPtsList_.appendChild(h3);
+//     ctrlPtsList_.appendChild(ol);
+// }
+// function getMousePos(canvas, evt) {
+//     var rect = canvas.getBoundingClientRect();
+//     return {
+//         x: Math.round(evt.clientX - rect.left),
+//         y: Math.round(evt.clientY - rect.top)
+//     };
+// }
+// let index2 = -1;
 
-function onMouseMove2(evt) {
-    var pos = getMousePos(this, evt);
-    points[index2] = [pos.x, pos.y];
-    ctx.clearRect(0, 0, 500, 300);
-    drawControlPts(points);
-    drawLines(u_arr.map(mymap), "#000000");
-    showCtrPts_bs(points);
-}
-canvas.addEventListener('mousedown', function (evt) {
-    var pos = getMousePos(this, evt);
-    for (let i = 0; i < points.length; i++) {
-        if (Math.abs(pos.x - points[i][0]) < 5 && Math.abs(pos.y - points[i][1]) < 5) {
-            points[i] = [pos.x, pos.y];
-            index2 = i;
-            this.addEventListener("mousemove", onMouseMove2);
-            this.addEventListener("mouseup", function (evt) {
-                this.removeEventListener("mousemove", onMouseMove2);
-            });
-        }
-    }
-})
-showCtrPts_bs(points);
-drawLines(ans, "#000000");
-drawControlPts(points);
+// function onMouseMove2(evt) {
+//     var pos = getMousePos(this, evt);
+//     points[index2] = [pos.x, pos.y];
+//     ctx.clearRect(0, 0, 500, 300);
+//     drawControlPts(points);
+//     drawLines(u_arr.map(mymap), "#000000");
+//     showCtrPts_bs(points);
+// }
+// canvas.addEventListener('mousedown', function (evt) {
+//     var pos = getMousePos(this, evt);
+//     for (let i = 0; i < points.length; i++) {
+//         if (Math.abs(pos.x - points[i][0]) < 5 && Math.abs(pos.y - points[i][1]) < 5) {
+//             points[i] = [pos.x, pos.y];
+//             index2 = i;
+//             this.addEventListener("mousemove", onMouseMove2);
+//             this.addEventListener("mouseup", function (evt) {
+//                 this.removeEventListener("mousemove", onMouseMove2);
+//             });
+//         }
+//     }
+// })
+// showCtrPts_bs(points);
+// drawLines(ans, "#000000");
+// drawControlPts(points);

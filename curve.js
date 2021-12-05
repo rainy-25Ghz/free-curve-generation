@@ -1,6 +1,21 @@
-let canvas_bz = document.getElementById('bezier');
-let ctx_bz = canvas_bz.getContext('2d');
-
+let canvas_bz = document.getElementById("bezier");
+let ctx_bz = canvas_bz.getContext("2d");
+function setupCanvas(canvas) {
+    // Get the device pixel ratio, falling back to 1.
+    var dpr = window.devicePixelRatio || 1;
+    // Get the size of the canvas in CSS pixels.
+    var rect = canvas.getBoundingClientRect();
+    // Give the canvas pixel dimensions of their CSS
+    // size * the device pixel ratio.
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    var ctx = canvas.getContext("2d");
+    // Scale all drawing operations by the dpr, so you
+    // don't have to worry about the difference.
+    ctx.scale(dpr, dpr);
+    return ctx;
+}
+setupCanvas(canvas_bz);
 //绘制控制点
 const drawPt_bz = (pts, color) => {
     ctx_bz.beginPath();
@@ -13,7 +28,7 @@ const drawPt_bz = (pts, color) => {
         ctx_bz.font = "10px";
         ctx_bz.fillText(`${x},${y}`, x + 5, y);
     }
-}
+};
 const drawLines_bz = (pts, color) => {
     ctx_bz.beginPath();
     ctx_bz.strokeStyle = color;
@@ -22,12 +37,18 @@ const drawLines_bz = (pts, color) => {
         ctx_bz.lineTo(x, y);
     }
     ctx_bz.stroke();
-}
+};
 const drawControlPts_bz = (pts, color1 = "#52b3ef", color2 = "#52b3ef") => {
     drawPt_bz(pts, color1);
     drawLines_bz(pts, color2);
-}
-let points_bz = [[90, 200], [25, 100], [220, 40], [110, 240], [150, 280]]
+};
+let points_bz = [
+    [90, 200],
+    [25, 100],
+    [220, 40],
+    [110, 240],
+    [150, 280],
+];
 
 //求解贝塞尔曲线
 //递归求解
@@ -47,22 +68,24 @@ const bezier = (points, t) => {
         new_pts[i] = [x, y];
     }
     return bezier(new_pts, t);
-}
+};
 // 绘制贝塞尔函数
 const drawBezier = (controlPts) => {
     let t_arr = Array(101).fill(0);
     t_arr = t_arr.map((value, index) => index * 0.01);
     //console.log(t_arr);
-    bezierPts = t_arr.map(t => bezier(controlPts, t));
+    bezierPts = t_arr.map((t) => bezier(controlPts, t));
     drawLines_bz(bezierPts, "#000010");
-}
+};
 drawControlPts_bz(points_bz);
 drawBezier(points_bz);
 let ctrlPtsList = document.getElementById("PtsList");
 const showCtrPts_bz = (pts) => {
-    while (ctrlPtsList.firstChild) { ctrlPtsList.removeChild(ctrlPtsList.firstChild) };
+    while (ctrlPtsList.firstChild) {
+        ctrlPtsList.removeChild(ctrlPtsList.firstChild);
+    }
     let ol = document.createElement("ol");
-    pts.forEach(pt => {
+    pts.forEach((pt) => {
         let li = document.createElement("li");
         li.textContent = `(${pt[0]},${pt[1]})`;
         ol.appendChild(li);
@@ -71,12 +94,12 @@ const showCtrPts_bz = (pts) => {
     h3.textContent = "控制点坐标";
     ctrlPtsList.appendChild(h3);
     ctrlPtsList.appendChild(ol);
-}
+};
 showCtrPts_bz(points_bz);
 let increaseBt = document.getElementById("increase_bz");
 const onIncrease = () => {
-    let x = Math.floor((Math.random() * 450 + 1));
-    let y = Math.floor((Math.random() * 280 + 1));
+    let x = Math.floor(Math.random() * 450 + 1);
+    let y = Math.floor(Math.random() * 280 + 1);
     points_bz.push([x, y]);
     ctx_bz.clearRect(0, 0, 500, 300);
     drawControlPts_bz(points_bz);
@@ -85,7 +108,7 @@ const onIncrease = () => {
     let li = document.createElement("li");
     li.textContent = `(${x},${y})`;
     ol.appendChild(li);
-}
+};
 increaseBt.onclick = onIncrease;
 let decreaseBt = document.getElementById("decrease_bz");
 const onDecrease = () => {
@@ -96,16 +119,14 @@ const onDecrease = () => {
     let ol = document.querySelector("ol");
     let li_arr = ol.childNodes;
     ol.removeChild(li_arr[li_arr.length - 1]);
-}
+};
 decreaseBt.onclick = onDecrease;
-function renderList() {
-
-}
+function renderList() {}
 function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
     return {
         x: Math.round(evt.clientX - rect.left),
-        y: Math.round(evt.clientY - rect.top)
+        y: Math.round(evt.clientY - rect.top),
     };
 }
 let index = -1;
@@ -118,10 +139,13 @@ function onMouseMove(evt) {
     drawBezier(points_bz);
     showCtrPts_bz(points_bz);
 }
-canvas_bz.addEventListener('mousedown', function (evt) {
+canvas_bz.addEventListener("mousedown", function (evt) {
     var pos = getMousePos(this, evt);
     for (let i = 0; i < points_bz.length; i++) {
-        if (Math.abs(pos.x - points_bz[i][0]) < 5 && Math.abs(pos.y - points_bz[i][1]) < 5) {
+        if (
+            Math.abs(pos.x - points_bz[i][0]) < 5 &&
+            Math.abs(pos.y - points_bz[i][1]) < 5
+        ) {
             points_bz[i] = [pos.x, pos.y];
             index = i;
             this.addEventListener("mousemove", onMouseMove);
@@ -130,8 +154,7 @@ canvas_bz.addEventListener('mousedown', function (evt) {
             });
         }
     }
-})
-
+});
 
 // //b样条部分
 // const points = [[111, 256], [25, 100], [220, 40], [422, 100], [416, 256]];//测试用

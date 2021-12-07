@@ -1,10 +1,11 @@
 let canvas_bz = document.getElementById("bezier");
 let ctx_bz = canvas_bz.getContext("2d");
+let rect ;
 function setupCanvas(canvas) {
     // Get the device pixel ratio, falling back to 1.
     var dpr = window.devicePixelRatio || 1;
     // Get the size of the canvas in CSS pixels.
-    var rect = canvas.getBoundingClientRect();
+   rect = canvas.getBoundingClientRect();
     // Give the canvas pixel dimensions of their CSS
     // size * the device pixel ratio.
     canvas.width = rect.width * dpr;
@@ -101,7 +102,7 @@ const onIncrease = () => {
     let x = Math.floor(Math.random() * 450 + 1);
     let y = Math.floor(Math.random() * 280 + 1);
     points_bz.push([x, y]);
-    ctx_bz.clearRect(0, 0, 500, 300);
+    ctx_bz.clearRect(0, 0,rect.width,rect.height );
     drawControlPts_bz(points_bz);
     drawBezier(points_bz);
     let ol = document.querySelector("ol");
@@ -113,7 +114,7 @@ increaseBt.onclick = onIncrease;
 let decreaseBt = document.getElementById("decrease_bz");
 const onDecrease = () => {
     points_bz.pop();
-    ctx_bz.clearRect(0, 0, 500, 300);
+    ctx_bz.clearRect(0, 0,rect.width,rect.height);
     drawControlPts_bz(points_bz);
     drawBezier(points_bz);
     let ol = document.querySelector("ol");
@@ -134,7 +135,7 @@ let index = -1;
 function onMouseMove(evt) {
     var pos = getMousePos(this, evt);
     points_bz[index] = [pos.x, pos.y];
-    ctx_bz.clearRect(0, 0, 500, 300);
+    ctx_bz.clearRect(0, 0, rect.width,rect.height);
     drawControlPts_bz(points_bz);
     drawBezier(points_bz);
     showCtrPts_bz(points_bz);
